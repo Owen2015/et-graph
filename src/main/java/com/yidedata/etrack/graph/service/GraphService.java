@@ -34,7 +34,7 @@ public class GraphService {
 		edges = new ArrayList<DefaultWeightedEdge>();
 		nodesmap = new HashMap<String, DistributionFrame>();
 		String path_df = ".\\resource\\cabinets.txt";
-		String path_link = ".\\resource\\links.txt";
+		String path_link = ".\\resource\\links_cabinets.txt";
 		List<ArrayList<String>> distributionFrames = IOUtil.import2D(path_df);
 		List<ArrayList<String>> links = IOUtil.import2D(path_link);
 		// init nodes
@@ -44,7 +44,7 @@ public class GraphService {
 			df.setLabel(distributionFrames.get(i).get(1));
 			df.setName(distributionFrames.get(i).get(2));
 			nodes.add(df);
-			nodesmap.put(df.getName(), df);
+			nodesmap.put(df.getPosition(), df);
 		}
 
 		simpleWeightedGraph = new SimpleWeightedGraph<DistributionFrame, DefaultWeightedEdge>(
@@ -68,7 +68,7 @@ public class GraphService {
 		return path;
 	}
 
-	public List kShortestPath(String source, String target,int k) {
+	public List<GraphPath<DistributionFrame, DefaultWeightedEdge>> kShortestPath(String source, String target,int k) {
 
 		KShortestPaths<DistributionFrame, DefaultWeightedEdge> ksp=new KShortestPaths<DistributionFrame, DefaultWeightedEdge>(simpleWeightedGraph,k);
 		List<GraphPath<DistributionFrame,DefaultWeightedEdge>> paths=ksp.getPaths(nodesmap.get(source), nodesmap.get(target));
@@ -77,13 +77,22 @@ public class GraphService {
 
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
+		//D-1FB12-T2   D-1FX43-U39 D-1FB12-T2
 		GraphService gs=new GraphService();
-		GraphPath<DistributionFrame, DefaultWeightedEdge> path=gs.shortestPath("D-1FA01-T1", "D-1FD01-T3");
+		GraphPath<DistributionFrame, DefaultWeightedEdge> path=gs.shortestPath("1FA01", "1FX42");
 		for(DistributionFrame v:path.getVertexList()){
-			System.out.print("'"+v.getName()+"'"+" ");
+			System.out.print("'"+v.getPosition()+"'"+" ");
 		}
 		System.out.println("");
 		System.out.println(path.getWeight());
+		
+		List<GraphPath<DistributionFrame,DefaultWeightedEdge>> paths=gs.kShortestPath("1FA01", "1FX42", 3);
+		for(GraphPath<DistributionFrame,DefaultWeightedEdge> p:paths){
+			for(DistributionFrame v:p.getVertexList()){
+				System.out.print("'"+v.getPosition()+"'"+" ");
+			}
+			System.out.print(" Weight is "+p.getWeight());
+			System.out.println("");
+		}
 	}
-
 }
